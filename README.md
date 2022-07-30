@@ -55,28 +55,29 @@ optional arguments:
 
 <h2 id="Disclaimer"> :pencil: Disclaimer</h2>
 
-`lazyGitleaks` is in beta version and is supposed to be free of issues but if any issues encountered, please submit the ticket,`lazyGitleaks` is coded and published to be used in partical circumstances:
+`lazyGitleaks` is in beta version and is supposed to be free of issues but if any issues are encountered, please submit the ticket,lazyGitleaks is coded and published to be used in particular circumstances:
 
 1. Engaging in penetration testing activity.
-2. Carry on Bug hunting activity.
+2. Carry on a Bug hunting activity.
 3. Source code review.
-4. Any other legal activity that already approved by the owner of the asset.
+4. Any other legal activity that is already approved by the owner of the asset.
 
-`lazyGitleaks` is craeted to work with all version control, which means there are many version control will be supported soon.
+`lazyGitleaks` is created to work with all version control, which means there are many version control that will be supported soon.
  
 <h2 id="Features"> :fuelpump: Features</h2>
 
-- [x] `lazyGitleaks` supports github.
-- [ ] `lazyGitleaks` supports gitlab.
-- [x] `lazyGitleaks` uses environment variable for storing Credentials.
-- [x] `lazyGitleaks` preform github API calls and clone the all available repositories.
+- [x] `lazyGitleaks` supports GitHub.
+- [ ] `lazyGitleaks` supports GitLab.
+- [x] `lazyGitleaks` uses an environment variable for storing Credentials.
+- [x] `lazyGitleaks` perform GitHub API calls and clone all available repositories.
 - [x] `lazyGitleaks` supports authenticated [public & private repositories] and non-authenticated [public repositories].
-- [x] `lazyGitleaks` monitors the github API limitation and the script detects the required time postpone the job.
-- [x] `lazyGitleaks` has it's unique `gitleaks.toml` that helps to find more secrets.
+- [x] `lazyGitleaks` monitors the GitHub API limitation and the script detects the required time to postpone the job.
+- [x] `lazyGitleaks` has its unique `gitleaks.toml` that helps to find more secrets.
 - [ ] `lazyGitleaks` supports pause & continue.
 
+
 >**Warning** <br>
->Authenticated scan it's run without issues when the target account is organization that you are member of or the provided github PAT is belong to the same target account.
+>Authenticated scan it's run without issues when the target account is an organization that you are a member of or the provided github PAT is belong to the same target account.
 
 
 <h2 id="prerequisites"> :cd: Prerequisites</h2>
