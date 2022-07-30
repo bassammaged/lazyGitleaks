@@ -2,6 +2,7 @@ import argparse
 from modules.logger import terminator,CustomError
 import colorama
 from os import path,environ
+from modules.platforms import platform
 
 class inputs:
     '''
@@ -21,6 +22,8 @@ class inputs:
         require.add_argument('-p','--platform',required=True,help="Specify the version control platform [github, gitlab]", type=str)
         require.add_argument('-t','--target',required=True,help="Provide the targeted account name",type=str)
         optional.add_argument('-a','--auth',help="By providing the flag the scan will be run with authentication mechanism.",default=False,action="store_true") 
+        optional.add_argument('-o','--org',help="By providing the flag the target will classified as organization account.",default=False,action="store_true") 
+        optional.add_argument('-v','--verbose',help="Allows the script to print out the message level start with debug.",action="store_true",default=False)
 
         parse._action_groups.append(optional)
         self.args = parse.parse_args()
@@ -41,12 +44,18 @@ class inputs:
                 auth = environ.get(env)
                 if auth == None:
                     raise CustomError('e','the {} isn\'t exist in the environment variables or has None value'.format(env))
+                # Import the platforms
+                platform(self.args,auth)
+            else:
+                # Import the platforms
+                platform(self.args,None)
             
         except CustomError as e:
             print(colorama.Fore.LIGHTRED_EX  + '\u2718 ' + e.message + colorama.Style.RESET_ALL)
             terminator()
         except Exception as e:
-            print(colorama.Fore.RED  + '\u2718 ' + e + colorama.Style.RESET_ALL)
+            # print(colorama.Fore.RED  + '\u2718 ' + str(e) + colorama.Style.RESET_ALL)
+            print(e)
             terminator()
 
 

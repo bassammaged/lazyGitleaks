@@ -2,7 +2,7 @@
     "github":{
        " status":true
     }, 
-    "gitlab":{
-        "status":true
+    "_gitlab":{
+        "status":false
     }
 }

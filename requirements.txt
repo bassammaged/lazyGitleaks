@@ -1,2 +1,4 @@
 argparse==1.4.0
 shutil
+pygithub==1.55
+progress==1.6
