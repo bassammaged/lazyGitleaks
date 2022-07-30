@@ -1,8 +1,11 @@
-from tabnanny import check
 import requests,base64,datetime
 from progress.bar import Bar
 from time import sleep
 from modules.logger import CustomError,terminator,logIt
+from modules.gitleaks import gt
+from os import path,chdir
+from json import dump
+import subprocess
 
 class platform:
     '''
@@ -13,7 +16,7 @@ class platform:
         self.logIt = logIt(True,args.platform,args.target,args.verbose)
         # Call the platform
         if args.platform == 'github':   # github platform
-            self.logIt.add_log('i','The github class has been imported.')
+            self.logIt.add_log('i','lazyGitleaks started the work, bring your tea.')
             github(args,auth_token,self.logIt)
 
         
@@ -73,12 +76,15 @@ class github:
                             self.repos_data[repo_data['name']] = {"clone_url":repo_data['clone_url'],"private":repo_data['private'],"cloned":False}
                     elif req.status_code == 200 and len(data) == 0: # there are no more repo's information in the body
                         self.logIt.add_log('i','Repositories information already collected; No. of repos {}'.format(len(self.repos_data)))
-                        # self._repo_win_back(first_repo_win_back_run=True)
-                        print(self.repos_data)
+                        if len(self.repos_data) == 0:
+                            raise CustomError('e','No repos found within the targeted account.')
+                        self._store_repos_information()
                         check_loop_status = False
                     elif req.status_code == 401:
                         self.logIt.add_log('e','The provided credential is incorrect')
                     page_no = page_no + 1
+            except CustomError as e:
+                self.logIt.add_log(e.severity,e.message)
             # If the connection to github API is failed the script will send 9 more tries
             except Exception as e:
                 if connection_tries == 10:
@@ -105,7 +111,55 @@ class github:
             bar.finish()
         return False
     
+    def _store_repos_information(self,update=False):
+        '''
+            _store_repos_information() is for storing the data of repos that already retrieved from github API
+        '''
+        self.working_dir = path.join(path.dirname(__file__),'..','logs',self.args.platform + '-' + self.args.target)
+        filename         = path.join(self.working_dir,'result-repos.json')
+        try:
+            with open(filename,'w') as repos_file:
+                dump(self.repos_data,repos_file,indent=4)
+        except Exception as e:
+            self.logIt.add_log('w','Failed to store the repos data into {}, Error Message: {}'.format(filename,e))
+        
+        # cloning the gathered repositories
+        if update == False:
+            self._cloning_repos()
     
+
+    def _cloning_repos(self):
+        '''
+            _cloning_repos() Cloning the repos that gathered from github API
+        '''
+        chdir(self.working_dir)
+        self.logIt.add_log('i','Cloning process started...')
+        self.logIt.add_log('w','lazyGitleaks will hang if "git clone" is failed while cloning process.')
+
+        # -- Prepare the progress bar with the count of repos.
+        bar = Bar('Clone',max=len(self.repos_data))
+
+        try:
+            for repo_name,repo_values in self.repos_data.items():
+                bar.next()
+                if self.auth_token != None: # Authenticated git clone
+                    clone_url = repo_values['clone_url'][0:8] + self.auth_token + "@" + repo_values['clone_url'][8:]
+                    cmd = subprocess.run(['git','clone',clone_url],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                else:   # non-authenticated git clone
+                    cmd = subprocess.run(['git','clone',repo_values['clone_url']],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+
+                # Check clone status
+                if cmd.returncode == 0:
+                        self.repos_data[repo_name]['cloned'] = True
+            bar.finish()
+            # Store the new status of repos after cloning
+            self._store_repos_information(self.repos_data)
+            self.logIt.add_log('i','Repositories have been cloned.')
+            gt(self.working_dir,self.repos_data,self.logIt)
+
+        except Exception as e:
+            self.logIt.add_log('e','Failed to clone the repositories, Error message: {}'.format(e))
+
 
 class gitlab:
     pass
