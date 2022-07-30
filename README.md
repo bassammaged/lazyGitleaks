@@ -1,6 +1,6 @@
 <h1 align="center">lazyGitleaks</h1>
 <p align="center">Find juicy secrets in the repositories</p>
-<p align="center">lazyGitleaks is a python script clone and scan the repositories to find hard-coded secrets</p>
+<p align="center">lazyGitleaks is a python script clone and scans the repositories to find hard-coded secrets</p>
 
 <details open="open">
 <summary>Table of Contents</summary>
